@@ -135,7 +135,7 @@ export const asyncRoutes = [
     component: Layout,
     redirect: '/datax/job',
     name: 'Example',
-    meta: { title: 'datax', icon: 'example' },
+    meta: { title: '系统管理', icon: 'example' },
     children: [
       {
         path: 'job',
@@ -156,6 +156,30 @@ export const asyncRoutes = [
         meta: { title: 'jdbc数据源管理', icon: 'table' }
       },
       {
+        path: 'FieldBlacklist',
+        name: '字段黑名单',
+        component: () => import('@/views/datax/FieldBlacklist/index'),
+        meta: { title: '字段黑名单', icon: 'table' }
+      },
+      {
+        path: 'workGroupManage',
+        name: '作业组管理',
+        component: () => import('@/views/datax/workGroupManage/index'),
+        meta: { title: '作业组管理', icon: 'table' }
+      },
+      {
+        path: 'userManage',
+        name: '用户管理',
+        component: () => import('@/views/datax/userManage/index'),
+        meta: { title: '用户管理', icon: 'table' }
+      },
+      {
+        path: 'roleManage',
+        name: '角色管理',
+        component: () => import('@/views/datax/roleManage/index'),
+        meta: { title: '角色管理', icon: 'table' }
+      },
+      {
         path: 'jsonBuild',
         name: 'jsonBuild',
         component: () => import('@/views/datax/json-build/index'),
@@ -167,6 +191,41 @@ export const asyncRoutes = [
         component: () => import('@/views/datax/GroupManagement/index'),
         meta: { title: '分组管理', icon: 'table' }
       }
+    ]
+  },
+  {
+    path: '/task',
+    component: Layout,
+    redirect: '/task/index',
+    name: '作业管理',
+    meta: { title: 'task', icon: 'example' },
+    children: [
+      {
+        path: 'index',
+        name: '作业管理',
+        component: () => import('@/views/taskManage/index'),
+        meta: { title: '作业管理', icon: 'table', affix: true }
+      },
+    ]
+  },
+  {
+    path: '/dailyManage',
+    component: Layout,
+    redirect: '/dailyManage/systemDaily',
+    name: '日志管理',
+    meta: { title: '日志管理', icon: 'example' },
+    children: [
+      {
+        path: 'systemDaily',
+        name: '系统日志',
+        component: () => import('@/views/dailyManage/systemDaily'),
+        meta: { title: '系统日志', icon: 'table', affix: true }
+      },{
+        path: 'dataxDaily',
+        name: 'datax日志',
+        component: () => import('@/views/dailyManage/dataxDaily'),
+        meta: { title: 'datax日志', icon: 'table', affix: true }
+      },
     ]
   },
   toolRouter,

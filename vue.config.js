@@ -12,7 +12,7 @@ const name = defaultSettings.title || 'DATAX-ADMIN' // page title
 // For example, Mac: sudo npm run
 const port = 8081 // dev port
 const apiPort = 9527
-console.log([process.env.VUE_APP_API])
+
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -37,18 +37,11 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       //代理 /dev-api/api 到 http://localhost:8066/api
-      // [process.env.VUE_APP_API]: {
-      //   target: `http://152.136.139.89:${apiPort}`,
-      //   changeOrigin: true,
-      //   pathRewrite: {
-      //     ['^' + process.env.VUE_APP_API]: ''
-      //   }
-      // },
-      '/dev-api': {
+      "/dev-api": {
         target: `http://152.136.139.89:${apiPort}`,
         changeOrigin: true,
         pathRewrite: {
-          '^/dev-api': ''
+          "^/dev-api": ''
         }
       },
       // mock 的代理
