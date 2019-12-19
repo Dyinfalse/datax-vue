@@ -1,11 +1,11 @@
 <template>
   <div>
     <div class="task-main">
-      <el-input class="t-input" v-model="taskName" placeholder="组名"></el-input>
-      <el-button class="filter-item" type="primary" icon="el-icon-trash">
+      <el-input class="t-input" v-model="filter.taskName" placeholder="组名"></el-input>
+      <el-button class="filter-item" type="primary" @click="getTaskList(1)" icon="el-icon-trash">
         搜索
       </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-trash" @click="showAddForm = true">
+      <el-button class="filter-item" type="primary" icon="el-icon-trash" @click="openAdd()">
         新增
       </el-button>
     </div>
@@ -39,7 +39,7 @@
           label="操作"
           width="200">
           <template slot-scope="scope">
-            <el-button type="primary" size="small">编辑</el-button>
+            <el-button type="primary" size="small" @click="editForm(scope.row)">编辑</el-button>
             <el-button type="danger" size="small" @click="deleteTaskList(scope.row.id, scope.$index)">删除</el-button>
           </template>
         </el-table-column>
@@ -83,7 +83,7 @@ import { Message } from 'element-ui'
 export default {
   data() {
     return {
-      taskName: '',
+      isEdit: false,
       options: [],
       value: '',
       tableData: [],
@@ -93,6 +93,9 @@ export default {
       labelPosition: 'right',
       total: 0,
       pageSize: 10,
+      filter: {
+        taskName: ''
+      },
       formLabelAlign: {
         name: '',
         remark: '',
@@ -107,14 +110,15 @@ export default {
       this.getTaskList(val)
     },
     onSubmit () {
+
       request({
-        url: '/system-manage/add-group',
+        url: this.isEdit ? '/system-manage/update-group' : '/system-manage/add-group',
         method: 'post',
         data: { ...this.formLabelAlign }
       }).then(res => {
-        this.showAddForm = false
-        Message.success('添加成功')
-        this.getTaskList(1)
+        this.showAddForm = false;
+        Message.success(this.isEdit ? '编辑成功' : '添加成功');
+        this.getTaskList(1);
       })
     },
     /**
@@ -124,7 +128,7 @@ export default {
       request({
         url: '/system-manage/list-group',
         method: 'post',
-        data: { pageNum, pageSize: this.pageSize }
+        data: { pageNum, pageSize: this.pageSize, name: this.filter.taskName }
       }).then(res => {
         this.tableData = res.data.list;
         this.total = res.data.total
@@ -134,15 +138,33 @@ export default {
      * 删除作业组列表
      */
     deleteTaskList(id, index){
-      request({
-        url: '/system-manage/update-delete',
-        method: 'post',
-        data: { id }
-      }).then(res => {
-        Message.success('删除成功');
-        this.tableData = this.tableData.splice(index, 1);
+      this.$confirm('是否确认删除', '提示').then(() => {
+        request({
+          url: '/system-manage/update-delete',
+          method: 'post',
+          data: { id }
+        }).then(res => {
+          Message.success('删除成功');
+          this.tableData = this.tableData.splice(index, 1);
+        })
       })
-    }
+    },
+    /**
+     * 编辑
+     */
+     editForm(row) {
+      this.formLabelAlign = row;
+      this.showAddForm = true;
+      this.isEdit = true;
+     },
+     /**
+      * 新建
+      */
+      openAdd(){
+        this.formLabelAlign = { name: '', remark: ''};
+        this.showAddForm = true;
+        this.isEdit = false;
+      }
   },
   mounted(){
     this.getTaskList(1);
