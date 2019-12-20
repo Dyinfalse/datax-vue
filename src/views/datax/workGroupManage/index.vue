@@ -24,7 +24,7 @@
           label="组名">
         </el-table-column>
         <el-table-column
-          prop="createUserId"
+          prop="userName"
           label="创建人">
         </el-table-column>
         <el-table-column
@@ -145,7 +145,7 @@ export default {
           data: { id }
         }).then(res => {
           Message.success('删除成功');
-          this.tableData = this.tableData.splice(index, 1);
+          this.tableData.splice(index, 1);
         })
       })
     },

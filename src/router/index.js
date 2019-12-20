@@ -80,7 +80,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: 'ETL', icon: 'dashboard', affix: true }
       }
     ]
   }
@@ -153,7 +153,7 @@ export const asyncRoutes = [
         path: 'jdbcDatasource',
         name: 'jdbcDatasource',
         component: () => import('@/views/datax/jdbc-datasource/index'),
-        meta: { title: 'jdbc数据源管理', icon: 'table' }
+        meta: { title: '数据源管理', icon: 'table' }
       },
       {
         path: 'FieldBlacklist',
@@ -179,12 +179,12 @@ export const asyncRoutes = [
         component: () => import('@/views/datax/roleManage/index'),
         meta: { title: '角色管理', icon: 'table' }
       },
-      {
-        path: 'jsonBuild',
-        name: 'jsonBuild',
-        component: () => import('@/views/datax/json-build/index'),
-        meta: { title: 'datax json构建', icon: 'table' }
-      },
+      // {
+      //   path: 'jsonBuild',
+      //   name: 'jsonBuild',
+      //   component: () => import('@/views/datax/json-build/index'),
+      //   meta: { title: 'datax json构建', icon: 'table' }
+      // },
       {
         path: 'GroupManagement',
         name: 'GroupManagement',
@@ -197,14 +197,20 @@ export const asyncRoutes = [
     path: '/task',
     component: Layout,
     redirect: '/task/index',
-    name: '作业管理',
-    meta: { title: 'task', icon: 'example' },
+    name: 'Task',
+    meta: { title: '作业管理', icon: 'example' },
     children: [
       {
         path: 'index',
         name: '作业管理',
         component: () => import('@/views/taskManage/index'),
         meta: { title: '作业管理', icon: 'table', affix: true }
+      },
+      {
+        path: 'jsonBuild',
+        name: 'jsonBuild',
+        component: () => import('@/views/datax/json-build/index'),
+        meta: { title: '作业创建', icon: 'table' }
       },
     ]
   },

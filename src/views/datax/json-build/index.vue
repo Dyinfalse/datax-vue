@@ -2,27 +2,28 @@
   <div class="app-container">
     <div class="build-container">
       <el-steps :active="active" finish-status="success">
-        <el-step title="步骤 1" description="构建reader">1</el-step>
-        <el-step title="步骤 2" description="构建writer">2</el-step>
-        <el-step title="步骤 3" description="字段映射">3</el-step>
-        <el-step title="步骤 4" description="构建">4</el-step>
+        <el-step title="步骤 1" description="通用配置">1</el-step>
+        <el-step title="步骤 2" description="构建reader">2</el-step>
+        <el-step title="步骤 3" description="构建writer">3</el-step>
+        <el-step title="步骤 4" description="构建JSON">4</el-step>
       </el-steps>
 
       <!-- <el-button style="margin-top: 12px;" @click="last">上一步</el-button> -->
       <el-button style="margin-top: 12px;margin-bottom: 12px;" @click="next">下一步</el-button>
 
       <div v-show="active===1" class="step1">
-        <Reader ref="reader" />
+        <Reader ref="reader" :stepData="stepObject_1" />
       </div>
       <div v-show="active===2" class="step2">
-        <Writer ref="writer" />
+        <ReaderTwo ref="readerTwo" />
       </div>
       <div v-show="active===3" class="step3">
-        <FieldMapper ref="fieldMapper" />
+        <Writer ref="writer" />
+        <!-- <FieldMapper ref="fieldMapper" /> -->
       </div>
       <div v-show="active===4" class="step4">
         <el-button type="primary" @click="buildJson">构建</el-button>
-        <el-button type="info" @click="handleCopy(inputData,$event)">copy json</el-button>
+        <el-button type="info" @click="handleCopy(inputData,$event)">保存</el-button>
         <div style="margin-bottom: 20px;" />
         <json-editor v-show="active===4" ref="jsonEditor" v-model="configJson" />
       </div>
@@ -34,16 +35,23 @@
 import * as dataxJsonApi from '@/api/datax-json'
 import JsonEditor from '@/components/JsonEditor'
 import Reader from './reader'
+import ReaderTwo from './readerTwo'
 import Writer from './writer'
-import clip from '@/utils/clipboard'
 import FieldMapper from './components/fieldMapper'
+import clip from '@/utils/clipboard'
 
 export default {
-  components: { Reader, Writer, JsonEditor, FieldMapper },
+  components: { Reader, ReaderTwo, Writer, JsonEditor, FieldMapper },
   data() {
     return {
       configJson: '',
-      active: 1
+      active: 1,
+      // 第一步数据
+      stepObject_1: {
+        jobName: '',
+        groupId: null,
+        remark: ''
+      },
     }
   },
   created() {
@@ -53,18 +61,11 @@ export default {
     next() {
       // 第一步 reader 判断是否已选字段
       if (this.active === 1) {
-        // this.$refs.reader.testBtn()
+        
         // 取子组件的数据
         console.info(this.$refs.reader.getData())
         this.active++
-        // if (this.readerForm.columns.length > 0) {
-        //   this.active++
-        // } else {
-        //   this.$message({
-        //     message: '无法进行下一步',
-        //     type: 'warning'
-        //   })
-        // }
+        
       } else {
         if (this.active++ === 4) {
           // 切回第一步
@@ -110,7 +111,7 @@ export default {
     handleCopy(text, event) {
       clip(this.configJson, event)
       this.$message({
-        message: 'copy success',
+        message: '保存成功',
         type: 'success'
       })
     }

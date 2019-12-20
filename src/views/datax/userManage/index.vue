@@ -148,20 +148,21 @@ export default {
       })
     },
     /**
-     * 删除作业组列表
+     * 删除用户列表
      */
     deleteTaskList(id, index){
       this.$confirm('是否确认删除', '提示').then(() => {
         request({
-          url: '/system-manage/update-delete',
+          url: '/system-manage/delete-user',
           method: 'post',
           data: { id }
         }).then(res => {
           Message.success('删除成功');
-          this.tableData = this.tableData.splice(index, 1);
+          this.tableData.splice(index, 1);
         })
       })
     },
+
     /**
      * 编辑
      */

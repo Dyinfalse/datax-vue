@@ -1,12 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.datasourceName" clearable placeholder="数据源名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="fetchData">
-        Search
-      </el-button>
+      <!--<el-input v-model="listQuery.datasourceName" clearable placeholder="数据源名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        Add
+        新建连接
       </el-button>
       <!-- <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
         reviewer
@@ -20,38 +17,35 @@
       fit
       highlight-current-row
     >
-      <!-- <el-table-column align="center" label="序号" width="95">
+       <el-table-column align="center" label="序号" width="95">
         <template slot-scope="scope">{{ scope.$index }}</template>
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column label="数据源名称" width="110" align="center">
         <template slot-scope="scope">{{ scope.row.datasourceName }}</template>
       </el-table-column>
-      <el-table-column label="数据源分组" width="110" align="center">
-        <template slot-scope="scope">{{ scope.row.datasourceGroup }}
+      <el-table-column label="类型" width="110" align="center">
+        <template slot-scope="scope">{{ scope.row.type }}
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="150" align="center">
+      <el-table-column label="服务器ip" width="150" align="center">
+        <template slot-scope="scope">{{ scope.row.ipAddress}}</template>
+      </el-table-column>
+      <el-table-column label="用户名" width="110" align="center">
         <template slot-scope="scope">{{ scope.row.jdbcUsername }}</template>
       </el-table-column>
-      <el-table-column label="密码" width="110" align="center">
-        <template slot-scope="scope">{{ scope.row.jdbcPassword }}</template>
+      <el-table-column label="日期" width="110" align="center" :show-overflow-tooltip="true">
+        <template slot-scope="scope">{{ scope.row.createDate}}</template>
       </el-table-column>
-      <el-table-column label="jdbc url" width="110" align="center" :show-overflow-tooltip="true">
-        <template slot-scope="scope">{{ scope.row.jdbcUrl }}</template>
+      <el-table-column label="运行状态" width="110" align="center" :show-overflow-tooltip="true">
+        <template slot-scope="scope">{{ scope.row.status == 0 ? '未启用':'已使用'}}</template>
       </el-table-column>
-      <el-table-column label="jdbc驱动类" width="110" align="center" :show-overflow-tooltip="true">
-        <template slot-scope="scope">{{ scope.row.jdbcDriverClass }}</template>
-      </el-table-column>
-      <el-table-column label="comments" width="110" align="center">
-        <template slot-scope="scope">{{ scope.row.comments }}</template>
-      </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            Edit
+            编辑
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row)">
-            Delete
+            删除
           </el-button>
         </template>
       </el-table-column>
@@ -60,11 +54,17 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left">
-        <el-form-item label="数据源名称" prop="datasourceName">
+        <el-form-item label="连接名" prop="datasourceName">
           <el-input v-model="temp.datasourceName" placeholder="数据源名称" />
         </el-form-item>
-        <el-form-item label="数据源分组" prop="datasourceGroup">
-          <el-input v-model="temp.datasourceGroup" placeholder="数据源分组" />
+        <el-form-item label="类型" prop="type">
+          <el-input v-model="temp.type" placeholder="类型" />
+        </el-form-item>
+        <el-form-item label="IP地址" prop="ipAddress">
+          <el-input v-model="temp.ipAddress" placeholder="IP地址" />
+        </el-form-item>
+        <el-form-item label="端口" prop="port">
+          <el-input v-model="temp.port" placeholder="端口" />
         </el-form-item>
         <el-form-item label="用户名" prop="jdbcUsername">
           <el-input v-model="temp.jdbcUsername" placeholder="用户名" />
@@ -72,22 +72,13 @@
         <el-form-item label="密码" prop="jdbcPassword">
           <el-input v-model="temp.jdbcPassword" placeholder="密码" />
         </el-form-item>
-        <el-form-item label="jdbc url" prop="jdbcUrl">
-          <el-input v-model="temp.jdbcUrl" :autosize="{ minRows: 3, maxRows: 6}" type="textarea" placeholder="jdbc url" />
-        </el-form-item>
-        <el-form-item label="jdbc驱动类" prop="jdbcDriverClass">
-          <el-input v-model="temp.jdbcDriverClass" placeholder="jdbc驱动类" />
-        </el-form-item>
-        <el-form-item label="注释">
-          <el-input v-model="temp.comments" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
-        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Cancel
+          取消
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
+          提交
         </el-button>
       </div>
     </el-dialog>
@@ -142,11 +133,12 @@ export default {
         create: 'Create'
       },
       rules: {
-        datasourceName: [{ required: true, message: 'this is required', trigger: 'blur' }],
-        jdbcUsername: [{ required: true, message: 'this is required', trigger: 'blur' }],
-        jdbcPassword: [{ required: true, message: 'this is required', trigger: 'blur' }],
-        jdbcUrl: [{ required: true, message: 'this is required', trigger: 'blur' }],
-        jdbcDriverClass: [{ required: true, message: 'this is required', trigger: 'blur' }]
+        datasourceName: [{ required: true, message: '必填', trigger: 'blur' }],
+        jdbcUsername: [{ required: true, message: '必填', trigger: 'blur' }],
+        jdbcPassword: [{ required: true, message: '必填', trigger: 'blur' }],
+        type: [{ required: true, message: '必填', trigger: 'blur' }],
+        ipAddress: [{ required: true, message: '必填', trigger: 'blur' }],
+        port: [{ required: true, message: '必填', trigger: 'blur' }]
       },
       temp: {
         id: undefined,
@@ -167,10 +159,10 @@ export default {
     fetchData() {
       this.listLoading = true
       datasourceApi.list(this.listQuery).then(response => {
-        const { records } = response
+        const { records } = response.data.list
         const { total } = response
         this.total = total
-        this.list = records
+        this.list = response.data.list
         this.listLoading = false
       })
     },
@@ -237,11 +229,9 @@ export default {
     },
     handleDelete(row) {
       console.log('删除')
-      const idList = []
-      idList.push(row.id)
       // 拼成 idList=xx
       // 多个比较麻烦，这里不处理
-      datasourceApi.deleted({ idList: row.id }).then(response => {
+      datasourceApi.deleted({id:row.id }).then(response => {
         this.fetchData()
         this.$notify({
           title: 'Success',

@@ -4,7 +4,7 @@ import request from '@/utils/request'
 
 export function list(params) {
   return request({
-    url: '/api/jobJdbcDatasource',
+    url: '/api/jobJdbcDatasource/list',
     method: 'get',
     params
   })
@@ -19,15 +19,15 @@ export function fetched(params) {
 
 export function updated(data) {
   return request({
-    url: '/api/jobJdbcDatasource/',
-    method: 'put',
+    url: '/api/jobJdbcDatasource/update',
+    method: 'post',
     data
   })
 }
 
 export function created(data) {
   return request({
-    url: '/api/jobJdbcDatasource/',
+    url: '/api/jobJdbcDatasource/add',
     method: 'post',
     data
   })
@@ -35,8 +35,8 @@ export function created(data) {
 
 export function deleted(data) {
   return request({
-    url: '/api/jobJdbcDatasource/',
-    method: 'delete',
-    params: data
+    url: '/api/jobJdbcDatasource/delete',
+    method: 'post',
+    data
   })
 }

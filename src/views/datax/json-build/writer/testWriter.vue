@@ -1,13 +1,6 @@
 <template>
   <div>
     <el-form label-position="left" label-width="80px" :model="writerForm">
-      <el-form-item>
-        <el-switch
-          v-model="writerForm.ifStreamWriter"
-          active-text="streamwriter"
-          inactive-text="other"
-        />
-      </el-form-item>
       <el-form-item label="数据源">
         <el-select
           v-model="writerForm.id"
@@ -64,7 +57,7 @@ export default {
       wColumnList: [],
       writerForm: {
         // 是否用streamwriter
-        ifStreamWriter: true,
+        ifStreamWriter: false,
         datasourceId: undefined,
         tableName: '',
         columns: [],
